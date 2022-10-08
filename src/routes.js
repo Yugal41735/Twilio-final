@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const twilio = require("twilio");
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
 
 // Axios allows us to make HTTP requests from our app
 const axios = require("axios").default;
@@ -7,8 +11,36 @@ const axios = require("axios").default;
 // Handle a GET request to the root directory,
 // and send "Hello World" as a response
 router.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.type('html');
+  
+  // res.send("Work In Progress!");
+  res.send(`
+  <label for="mobile">Enter your mobile number: </label>
+  <input type="tel" id="phoneNum" name="mobile"
+  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+  required>
+
+  
+
+  <small>Format: 123-456-7890</small>
+
+  <div>
+    <button id="submitbut">Submit</button>
+  </div>
+  `);
 });
+
+
+
+async function sendMsg(phoneNum) {
+  let message = await client.message.create({
+    from: '+18145645563',
+    body: 'testing',
+    to: phoneNum
+  });
+}
+
+sendMsg('+918696731165');
 
 // Handle a GET request to /github/USERNAME, where
 // USERNAME can be any GitHub username.
@@ -57,3 +89,5 @@ router.post("/sms", (req, res) => {
 });
 
 module.exports = router;
+
+
